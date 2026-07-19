@@ -2,6 +2,8 @@ package com.example.spring_task_manager.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class AssignedUser {
@@ -17,6 +19,9 @@ public class AssignedUser {
 
     @Enumerated(EnumType.STRING)
     private Position position;
+
+    @OneToMany(mappedBy = "users")
+    private List<Task> tasks;
 
     protected AssignedUser() {
     }
@@ -57,5 +62,13 @@ public class AssignedUser {
 
     public void setPosition(Position position) {
         this.position = position;
+    }
+
+    public void addTask(Task task) {
+        tasks.add(task);
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
     }
 }
