@@ -1,9 +1,11 @@
 package com.example.spring_task_manager.service;
 
+import com.example.spring_task_manager.dto.UserDTO;
 import com.example.spring_task_manager.entity.AssignedUser;
 import com.example.spring_task_manager.exceptions.UserAlreadyExistsInDataBase;
 import com.example.spring_task_manager.exceptions.UserNotFoundException;
 import com.example.spring_task_manager.repository.UserRepository;
+import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +19,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<AssignedUser> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(UserDTO::from)
+                .toList();
     }
     public AssignedUser getUserById(Long id) {
         return userRepository.findById(id).orElseThrow();
@@ -31,21 +36,25 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
-    public AssignedUser createUser(AssignedUser assignedUser) {
-        if (userRepository.existsByEmail(assignedUser.getEmail())) {
+    public UserDTO createUser(UserDTO assignedUser) {
+        if (userRepository.existsByEmail(assignedUser.email())) {
             throw new UserAlreadyExistsInDataBase(
                     String.format("User with this email {%s} already exists in database.",
-                            assignedUser.getEmail()));
+                            assignedUser.email()));
         }
-        return userRepository.save(assignedUser);
+
+        var newAssignedUser =
+                new AssignedUser(assignedUser.firstName(), assignedUser.email(), assignedUser.position());
+
+        return UserDTO.from(userRepository.save(newAssignedUser));
     }
-    public AssignedUser updateUser(AssignedUser assignedUser) {
-        var entityFromDB = getUserById(assignedUser.getId());
+    public UserDTO updateUser(UserDTO assignedUser, Long id) {
+        var entityFromDB = getUserById(id);
 
-        entityFromDB.setEmail(assignedUser.getEmail());
-        entityFromDB.setFirstName(assignedUser.getFirstName());
-        entityFromDB.setPosition(assignedUser.getPosition());
+        entityFromDB.setEmail(assignedUser.email());
+        entityFromDB.setFirstName(assignedUser.firstName());
+        entityFromDB.setPosition(assignedUser.position());
 
-        return userRepository.save(entityFromDB);
+        return UserDTO.from(userRepository.save(entityFromDB));
     }
 }
