@@ -1,5 +1,6 @@
 package com.example.spring_task_manager.service;
 
+import com.example.spring_task_manager.dto.TaskDTO;
 import com.example.spring_task_manager.entity.Status;
 import com.example.spring_task_manager.entity.Task;
 import com.example.spring_task_manager.exceptions.TaskAlreadyExists;
@@ -17,16 +18,20 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public Task createTask(Task task) {
-        if(taskRepository.existsByTitle(task.getTitle())) {
+    public TaskDTO createTask(TaskDTO task) {
+        if(taskRepository.existsByTitle(task.title())) {
            throw
                    new TaskAlreadyExists(
-                           String.format("Task with that title \"%s\" already exists", task.getTitle()));
+                           String.format("Task with that title \"%s\" already exists", task.title()));
         }
-        return taskRepository.save(task);
+        var newTask = new Task(task.title(), task.description(), task.status(), task.deadLine(), task.user(), task.priority());
+        return TaskDTO.from(taskRepository.save(newTask));
     }
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public List<TaskDTO> getAllTasks() {
+        return taskRepository.findAll()
+                .stream()
+                .map(TaskDTO::from)
+                .toList();
     }
     public Task getTaskById(Long id) {
         return taskRepository.findById(id).orElseThrow();

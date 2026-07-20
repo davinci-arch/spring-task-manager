@@ -34,20 +34,19 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private Priority priority;
 
-    public Task() {
+    protected Task() {
     }
 
     public Task(String title,
                 String description,
                 Status status,
-                LocalDateTime createdAt,
                 LocalDateTime deadLine,
                 AssignedUser assignedUser,
                 Priority priority) {
         this.title = title;
         this.description = description;
         this.status = status;
-        this.createdAt = createdAt;
+        this.createdAt = LocalDateTime.now();
         this.deadLine = deadLine;
         this.assignedUser = assignedUser;
         this.priority = priority;

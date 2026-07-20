@@ -1,7 +1,8 @@
 package com.example.spring_task_manager.controller;
 
+import com.example.spring_task_manager.dto.TaskDTO;
 import com.example.spring_task_manager.entity.Status;
-import com.example.spring_task_manager.entity.Task;
+import com.example.spring_task_manager.service.TaskService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,29 +12,42 @@ import java.util.List;
 @RequestMapping("api/tasks")
 public class TaskController {
 
+    private final TaskService taskService;
+
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
     @GetMapping
-    public List<Task> getAllTasks() {
-        return List.of();
+    public List<TaskDTO> getAllTasks() {
+        return taskService.getAllTasks();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        return null;
+    public ResponseEntity<String> deleteTask(@PathVariable Long id) {
+        taskService.deleteTaskById(id);
+        return ResponseEntity.ok()
+                .body(String.format("Task with id:%d was deleted", id));
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<Task> createTask(@PathVariable Long id, @RequestBody Task task) {
-        return null;
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<Task> updateTaskStatus(@PathVariable Long id, @RequestBody Status status) {
-        return null;
+    @PostMapping
+    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO task) {
+        return ResponseEntity.ok(taskService.createTask(task));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Task> updateTaskDescription(@PathVariable Long id, @RequestBody String description) {
-        return null;
+    public ResponseEntity<String> updateTaskStatus(@PathVariable Long id, @RequestBody Status status) {
+        taskService.updateTaskStatus(id, status);
+        return ResponseEntity.ok(
+                String.format("Status for task with id:%d was updated", id));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> updateTaskDescription(@PathVariable Long id, @RequestBody String description) {
+        taskService.updateTaskDescription(id, description);
+        return ResponseEntity.ok(
+                String.format("Description for task with id:%d was updated", id)
+        );
     }
 
 }
