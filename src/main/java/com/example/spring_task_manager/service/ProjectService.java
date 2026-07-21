@@ -1,5 +1,6 @@
 package com.example.spring_task_manager.service;
 
+import com.example.spring_task_manager.dto.ProjectDTO;
 import com.example.spring_task_manager.entity.Project;
 import com.example.spring_task_manager.entity.Task;
 import com.example.spring_task_manager.exceptions.EmptyFetchedResults;
@@ -20,12 +21,13 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public Project createProject(Project project) {
-        if (projectRepository.existsByName(project.getName())) {
+    public ProjectDTO createProject(ProjectDTO project) {
+        if (projectRepository.existsByName(project.name())) {
             throw new ProjectAlreadyExists(
-                    String.format("Project with that title \"%s\" already exists", project.getName()));
+                    String.format("Project with that title \"%s\" already exists", project.name()));
         }
-        return projectRepository.save(project);
+        var newProject = new Project(project.name(), project.description());
+        return ProjectDTO.from(projectRepository.save(newProject));
     }
 
     public List<Project> getAllProjects() {
@@ -63,11 +65,11 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public Project changeDescription(Long projectId, String description) {
+    public ProjectDTO changeDescription(Long projectId, String description) {
         var project = projectRepository.findById(projectId).orElseThrow();
         project.setDescription(description);
 
-        return projectRepository.save(project);
+        return ProjectDTO.from(projectRepository.save(project));
     }
 
 }
