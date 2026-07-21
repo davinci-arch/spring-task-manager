@@ -11,12 +11,12 @@ public record TaskDTO(String title,
                       String description,
                       Status status,
                       LocalDateTime deadLine,
-                      AssignedUser user,
+                      Long userId,
                       Priority priority
                       ) {
 
     public static TaskDTO from(Task task) {
         return new TaskDTO(task.getTitle(), task.getDescription(), task.getStatus(),
-                task.getDeadLine(), task.getAssignedUser(), task.getPriority());
+                task.getDeadLine(), task.getAssignedUser().getId(), task.getPriority());
     }
 }

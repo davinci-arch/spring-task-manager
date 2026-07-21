@@ -1,11 +1,14 @@
 package com.example.spring_task_manager.service;
 
+import com.example.spring_task_manager.dto.ProjectDTO;
+import com.example.spring_task_manager.dto.ProjectDTOCreateRequest;
 import com.example.spring_task_manager.entity.Project;
 import com.example.spring_task_manager.entity.Task;
 import com.example.spring_task_manager.exceptions.EmptyFetchedResults;
 import com.example.spring_task_manager.exceptions.ProjectAlreadyExists;
 import com.example.spring_task_manager.exceptions.ProjectDoNotExist;
 import com.example.spring_task_manager.repository.ProjectRepository;
+import com.example.spring_task_manager.repository.TaskRepository;
 import com.example.spring_task_manager.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,17 +18,22 @@ import java.util.List;
 public class ProjectService {
 
     private ProjectRepository projectRepository;
+    private TaskRepository taskRepository;
     private UserRepository userRepository;
-    public ProjectService(ProjectRepository projectRepository) {
+
+    public ProjectService(ProjectRepository projectRepository, TaskRepository taskRepository, UserRepository userRepository) {
         this.projectRepository = projectRepository;
+        this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
-    public Project createProject(Project project) {
-        if (projectRepository.existsByName(project.getName())) {
+    public ProjectDTO createProject(ProjectDTOCreateRequest project) {
+        if (projectRepository.existsByName(project.title())) {
             throw new ProjectAlreadyExists(
-                    String.format("Project with that title \"%s\" already exists", project.getName()));
+                    String.format("Project with that title \"%s\" already exists", project.title()));
         }
-        return projectRepository.save(project);
+        var newProject = new Project(project.title(), project.description());
+        return ProjectDTO.from(projectRepository.save(newProject));
     }
 
     public List<Project> getAllProjects() {
@@ -47,8 +55,9 @@ public class ProjectService {
         }
     }
 
-    public void addNewTask(Long id, Task task) {
+    public void addNewTask(Long id, Long taskId) {
         var project = projectRepository.findById(id).orElseThrow();
+        var task = taskRepository.findById(taskId).orElseThrow();
         project.getTasks().add(task);
 
         projectRepository.save(project);
@@ -63,11 +72,11 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public Project changeDescription(Long projectId, String description) {
+    public ProjectDTO changeDescription(Long projectId, String description) {
         var project = projectRepository.findById(projectId).orElseThrow();
         project.setDescription(description);
 
-        return projectRepository.save(project);
+        return ProjectDTO.from(projectRepository.save(project));
     }
 
 }

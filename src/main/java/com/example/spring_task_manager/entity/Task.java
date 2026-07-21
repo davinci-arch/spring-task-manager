@@ -31,6 +31,9 @@ public class Task {
     @ManyToOne
     private AssignedUser assignedUser;
 
+    @ManyToOne
+    private Project project;
+
     @Enumerated(EnumType.STRING)
     private Priority priority;
 
@@ -41,7 +44,6 @@ public class Task {
                 String description,
                 Status status,
                 LocalDateTime deadLine,
-                AssignedUser assignedUser,
                 Priority priority) {
         this.title = title;
         this.description = description;
@@ -114,5 +116,13 @@ public class Task {
 
     public void setPriority(Priority priority) {
         this.priority = priority;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

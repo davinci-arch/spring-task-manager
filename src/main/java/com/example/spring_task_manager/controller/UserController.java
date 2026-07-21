@@ -32,7 +32,7 @@ public class UserController {
                 .body(String.format("User with id:%d was deleted", id));
     }
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO user, @PathVariable Long id) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserDTO user) {
         return ResponseEntity.ok().body(userService.updateUser(user, id));
     }
 }

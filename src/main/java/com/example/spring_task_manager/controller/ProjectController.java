@@ -1,8 +1,12 @@
 package com.example.spring_task_manager.controller;
 
 import com.example.spring_task_manager.dto.ProjectDTO;
+import com.example.spring_task_manager.dto.ProjectDTOCreateRequest;
+import com.example.spring_task_manager.dto.TaskDTO;
+import com.example.spring_task_manager.dto.UserDTO;
 import com.example.spring_task_manager.entity.AssignedUser;
 import com.example.spring_task_manager.entity.Task;
+import com.example.spring_task_manager.service.ProjectService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,33 +16,45 @@ import java.util.List;
 @RequestMapping("/api/projects")
 public class ProjectController {
 
+    private ProjectService projectService;
+
+    public ProjectController(ProjectService projectService) {
+        this.projectService = projectService;
+    }
+
     @GetMapping
     public List<ProjectDTO> getAllProjects() {
-        return null;
+        return projectService.getAllProjects()
+                .stream()
+                .map(ProjectDTO::from)
+                .toList();
     }
 
     @PostMapping
-    public ResponseEntity<ProjectDTO> createNewProject(@RequestBody ProjectDTO projectDTO) {
-        return null;
+    public ResponseEntity<ProjectDTO> createNewProject(@RequestBody ProjectDTOCreateRequest projectDTO) {
+        return ResponseEntity.ok(projectService.createProject(projectDTO));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ProjectDTO> deleteProject(@PathVariable Long id) {
-        return null;
+    @DeleteMapping
+    public ResponseEntity<String> deleteProject(@RequestParam("projectTitle") String projectTitle) {
+        projectService.deleteProjectByName(projectTitle);
+        return ResponseEntity.ok(String.format("Project with title:%s was deleted", projectTitle));
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<ProjectDTO> updateProjectDescription(@PathVariable Long id, @RequestBody String description) {
-        return null;
+        return ResponseEntity.ok(projectService.changeDescription(id, description));
     }
 
     @PatchMapping("/{id}/users")
-    public ResponseEntity<ProjectDTO> addNewUser(@PathVariable Long id, @RequestBody AssignedUser user) {
-        return null;
+    public ResponseEntity<String> addNewUser(@PathVariable Long id, @RequestBody Long userId) {
+        projectService.assignUserToProject(id, userId);
+        return ResponseEntity.ok(String.format("User with id:%d was assigned to project succsessfully", userId));
     }
 
     @PatchMapping("/{id}/tasks")
-    public ResponseEntity<Task> addNewTask(@PathVariable Long id, @RequestBody Task task) {
-        return null;
+    public ResponseEntity<String> addNewTask(@PathVariable Long id, @RequestParam Long taskId) {
+        projectService.addNewTask(id, taskId);
+        return ResponseEntity.ok(String.format("New task with id:%d to project was added", taskId));
     }
 }

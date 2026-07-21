@@ -6,16 +6,19 @@ import com.example.spring_task_manager.entity.Task;
 import com.example.spring_task_manager.exceptions.TaskAlreadyExists;
 import com.example.spring_task_manager.exceptions.TaskDoNotExist;
 import com.example.spring_task_manager.repository.TaskRepository;
+import com.example.spring_task_manager.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class TaskService {
+    private final UserRepository userRepository;
     private TaskRepository taskRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
     public TaskDTO createTask(TaskDTO task) {
@@ -24,7 +27,7 @@ public class TaskService {
                    new TaskAlreadyExists(
                            String.format("Task with that title \"%s\" already exists", task.title()));
         }
-        var newTask = new Task(task.title(), task.description(), task.status(), task.deadLine(), task.user(), task.priority());
+        var newTask = new Task(task.title(), task.description(), task.status(), task.deadLine(), task.priority());
         return TaskDTO.from(taskRepository.save(newTask));
     }
     public List<TaskDTO> getAllTasks() {
@@ -55,5 +58,12 @@ public class TaskService {
             );
         }
         taskRepository.deleteById(id);
+    }
+    public void assignUserToTheTask(Long taskId, Long userId) {
+        var task = taskRepository.findById(taskId).orElseThrow();
+        var user = userRepository.findById(userId).orElseThrow();
+
+        task.setAssignedUser(user);
+        taskRepository.save(task);
     }
 }

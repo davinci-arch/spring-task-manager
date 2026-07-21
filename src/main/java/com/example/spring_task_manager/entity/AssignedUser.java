@@ -20,8 +20,11 @@ public class AssignedUser {
     @Enumerated(EnumType.STRING)
     private Position position;
 
-    @OneToMany(mappedBy = "users")
+    @OneToMany(mappedBy = "assignedUser")
     private List<Task> tasks;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Project project;
 
     protected AssignedUser() {
     }
@@ -70,5 +73,13 @@ public class AssignedUser {
 
     public List<Task> getTasks() {
         return tasks;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }
