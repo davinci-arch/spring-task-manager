@@ -50,4 +50,12 @@ public class TaskController {
         );
     }
 
+    @PatchMapping("/{id}/users")
+    public ResponseEntity<String> assignUserToTask(@PathVariable Long id, @RequestParam Long userId) {
+
+        return ResponseEntity.ok(
+                String.format("User with id:%d was assigned to task with id:%d", userId, id)
+        );
+    }
+
 }

@@ -1,6 +1,9 @@
 package com.example.spring_task_manager.controller;
 
 import com.example.spring_task_manager.dto.ProjectDTO;
+import com.example.spring_task_manager.dto.ProjectDTOCreateRequest;
+import com.example.spring_task_manager.dto.TaskDTO;
+import com.example.spring_task_manager.dto.UserDTO;
 import com.example.spring_task_manager.entity.AssignedUser;
 import com.example.spring_task_manager.entity.Task;
 import com.example.spring_task_manager.service.ProjectService;
@@ -28,12 +31,12 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<ProjectDTO> createNewProject(@RequestBody ProjectDTO projectDTO) {
+    public ResponseEntity<ProjectDTO> createNewProject(@RequestBody ProjectDTOCreateRequest projectDTO) {
         return ResponseEntity.ok(projectService.createProject(projectDTO));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProject(@PathVariable Long id, @RequestParam("projectTitle") String projectTitle) {
+    @DeleteMapping
+    public ResponseEntity<String> deleteProject(@RequestParam("projectTitle") String projectTitle) {
         projectService.deleteProjectByName(projectTitle);
         return ResponseEntity.ok(String.format("Project with title:%s was deleted", projectTitle));
     }
@@ -44,14 +47,14 @@ public class ProjectController {
     }
 
     @PatchMapping("/{id}/users")
-    public ResponseEntity<String> addNewUser(@PathVariable Long id, @RequestBody AssignedUser user) {
-        projectService.assignUserToProject(id, user.getId());
-        return ResponseEntity.ok(String.format("User with id:%d was assigned to project succsessfully", id));
+    public ResponseEntity<String> addNewUser(@PathVariable Long id, @RequestBody Long userId) {
+        projectService.assignUserToProject(id, userId);
+        return ResponseEntity.ok(String.format("User with id:%d was assigned to project succsessfully", userId));
     }
 
     @PatchMapping("/{id}/tasks")
-    public ResponseEntity<String> addNewTask(@PathVariable Long id, @RequestBody Task task) {
-        projectService.addNewTask(id, task);
-        return ResponseEntity.ok(String.format("New task with title:%s to proejct was added", task.getTitle()));
+    public ResponseEntity<String> addNewTask(@PathVariable Long id, @RequestParam Long taskId) {
+        projectService.addNewTask(id, taskId);
+        return ResponseEntity.ok(String.format("New task with id:%d to project was added", taskId));
     }
 }

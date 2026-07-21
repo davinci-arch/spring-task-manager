@@ -44,7 +44,6 @@ public class Task {
                 String description,
                 Status status,
                 LocalDateTime deadLine,
-                AssignedUser assignedUser,
                 Priority priority) {
         this.title = title;
         this.description = description;
