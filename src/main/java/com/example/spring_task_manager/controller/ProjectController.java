@@ -7,6 +7,7 @@ import com.example.spring_task_manager.dto.UserDTO;
 import com.example.spring_task_manager.entity.AssignedUser;
 import com.example.spring_task_manager.entity.Task;
 import com.example.spring_task_manager.service.ProjectService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,11 @@ public class ProjectController {
     public ResponseEntity<ProjectDTO> createNewProject(@RequestBody ProjectDTOCreateRequest projectDTO) {
         return ResponseEntity.ok(projectService.createProject(projectDTO));
     }
-
+    @PostMapping("/all")
+    public ResponseEntity<Void> createAllProjects(@RequestBody List<ProjectDTOCreateRequest> projectDTOList) {
+        projectService.createAllProjects(projectDTOList);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
     @DeleteMapping
     public ResponseEntity<String> deleteProject(@RequestParam("projectTitle") String projectTitle) {
         projectService.deleteProjectByName(projectTitle);

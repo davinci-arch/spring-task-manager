@@ -30,6 +30,10 @@ public class TaskService {
         var newTask = new Task(task.title(), task.description(), task.status(), task.deadLine(), task.priority());
         return TaskDTO.from(taskRepository.save(newTask));
     }
+
+    public void createAllTasks(List<TaskDTO> tasks) {
+        tasks.forEach(this::createTask);
+    }
     public List<TaskDTO> getAllTasks() {
         return taskRepository.findAll()
                 .stream()

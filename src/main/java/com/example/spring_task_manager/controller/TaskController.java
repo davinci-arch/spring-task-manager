@@ -3,6 +3,7 @@ package com.example.spring_task_manager.controller;
 import com.example.spring_task_manager.dto.TaskDTO;
 import com.example.spring_task_manager.entity.Status;
 import com.example.spring_task_manager.service.TaskService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +35,11 @@ public class TaskController {
     public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO task) {
         return ResponseEntity.ok(taskService.createTask(task));
     }
-
+    @PostMapping("/all")
+    public ResponseEntity<Void> createAllTasks(@RequestBody List<TaskDTO> tasks) {
+        taskService.createAllTasks(tasks);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
     @PatchMapping("/{id}/status")
     public ResponseEntity<String> updateTaskStatus(@PathVariable Long id, @RequestBody Status status) {
         taskService.updateTaskStatus(id, status);

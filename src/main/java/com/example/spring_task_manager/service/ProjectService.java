@@ -36,6 +36,10 @@ public class ProjectService {
         return ProjectDTO.from(projectRepository.save(newProject));
     }
 
+    public void createAllProjects(List<ProjectDTOCreateRequest> projects) {
+        projects.forEach(this::createProject);
+    }
+
     public List<Project> getAllProjects() {
         var projects = projectRepository.findAll();
         if (projects.isEmpty()) {
