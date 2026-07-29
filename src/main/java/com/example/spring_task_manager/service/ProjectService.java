@@ -3,7 +3,6 @@ package com.example.spring_task_manager.service;
 import com.example.spring_task_manager.dto.ProjectDTO;
 import com.example.spring_task_manager.dto.ProjectDTOCreateRequest;
 import com.example.spring_task_manager.entity.Project;
-import com.example.spring_task_manager.entity.Task;
 import com.example.spring_task_manager.exceptions.EmptyFetchedResults;
 import com.example.spring_task_manager.exceptions.ProjectAlreadyExists;
 import com.example.spring_task_manager.exceptions.ProjectDoNotExist;
@@ -28,11 +27,11 @@ public class ProjectService {
     }
 
     public ProjectDTO createProject(ProjectDTOCreateRequest project) {
-        if (projectRepository.existsByName(project.title())) {
+        if (projectRepository.existsByName(project.name())) {
             throw new ProjectAlreadyExists(
-                    String.format("Project with that title \"%s\" already exists", project.title()));
+                    String.format("Project with that title \"%s\" already exists", project.name()));
         }
-        var newProject = new Project(project.title(), project.description());
+        var newProject = new Project(project.name(), project.description());
         return ProjectDTO.from(projectRepository.save(newProject));
     }
 
@@ -57,23 +56,23 @@ public class ProjectService {
             throw new ProjectDoNotExist(
                     String.format("Project with that name \"%s\" does not exist", projectName));
         }
+        var project = projectRepository.findByName(projectName).orElseThrow();
+        projectRepository.delete(project);
     }
 
     public void addNewTask(Long id, Long taskId) {
         var project = projectRepository.findById(id).orElseThrow();
         var task = taskRepository.findById(taskId).orElseThrow();
-        project.getTasks().add(task);
+        task.setProject(project);
 
-        projectRepository.save(project);
+        taskRepository.save(task);
     }
     public void assignUserToProject(Long projectId, Long userId) {
         var project = projectRepository.findById(projectId).orElseThrow();
         var user = userRepository.findById(userId).orElseThrow();
 
-        if (!project.getAssignedUsers().contains(user)) {
-            project.assignUser(user);
-        }
-        projectRepository.save(project);
+        user.setProject(project);
+        userRepository.save(user);
     }
 
     public ProjectDTO changeDescription(Long projectId, String description) {

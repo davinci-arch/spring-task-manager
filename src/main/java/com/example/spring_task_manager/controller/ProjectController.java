@@ -52,7 +52,7 @@ public class ProjectController {
     }
 
     @PatchMapping("/{id}/users")
-    public ResponseEntity<String> addNewUser(@PathVariable Long id, @RequestBody Long userId) {
+    public ResponseEntity<String> assignUserToTask(@PathVariable Long id, @RequestBody Long userId) {
         projectService.assignUserToProject(id, userId);
         return ResponseEntity.ok(String.format("User with id:%d was assigned to project succsessfully", userId));
     }

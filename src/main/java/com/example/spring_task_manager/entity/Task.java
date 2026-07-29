@@ -28,10 +28,10 @@ public class Task {
     @Column(nullable = false)
     private LocalDateTime deadLine;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private AssignedUser assignedUser;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Project project;
 
     @Enumerated(EnumType.STRING)
