@@ -50,7 +50,6 @@ public class Task {
         this.status = status;
         this.createdAt = LocalDateTime.now();
         this.deadLine = deadLine;
-        this.assignedUser = assignedUser;
         this.priority = priority;
     }
 

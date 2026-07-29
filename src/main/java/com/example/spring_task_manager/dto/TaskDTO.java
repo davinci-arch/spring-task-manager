@@ -16,7 +16,12 @@ public record TaskDTO(String title,
                       ) {
 
     public static TaskDTO from(Task task) {
+        var assignedUserId = 0L;
+        if (task.getAssignedUser() != null) {
+            assignedUserId = task.getAssignedUser().getId();
+        }
+
         return new TaskDTO(task.getTitle(), task.getDescription(), task.getStatus(),
-                task.getDeadLine(), task.getAssignedUser().getId(), task.getPriority());
+                task.getDeadLine(), assignedUserId, task.getPriority());
     }
 }
