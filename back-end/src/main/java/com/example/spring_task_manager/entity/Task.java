@@ -28,10 +28,10 @@ public class Task {
     @Column(nullable = false)
     private LocalDateTime deadLine;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private AssignedUser assignedUser;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Project project;
 
     @Enumerated(EnumType.STRING)
@@ -50,7 +50,6 @@ public class Task {
         this.status = status;
         this.createdAt = LocalDateTime.now();
         this.deadLine = deadLine;
-        this.assignedUser = assignedUser;
         this.priority = priority;
     }
 

@@ -48,6 +48,9 @@ public class UserService {
 
         return UserDTO.from(userRepository.save(newAssignedUser));
     }
+    public void createAllUsers(List<UserDTO> users) {
+        users.forEach(this::createUser);
+    }
     public UserDTO updateUser(UserDTO assignedUser, Long id) {
         var entityFromDB = getUserById(id);
 

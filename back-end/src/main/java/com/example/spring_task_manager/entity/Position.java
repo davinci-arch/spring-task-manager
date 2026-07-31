@@ -6,5 +6,6 @@ public enum Position {
     DEVOPS,
     MANAGER,
     TEAM_LEAD,
+    QA,
     DEFAULT
 }

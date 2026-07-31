@@ -25,6 +25,11 @@ public class UserController {
         var newUser = userService.createUser(user);
         return ResponseEntity.ok().body(newUser);
     }
+    @PostMapping("/all")
+    public ResponseEntity<Void> createAllUsers(@RequestBody List<UserDTO> users) {
+        userService.createAllUsers(users);
+        return ResponseEntity.ok().build();
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
