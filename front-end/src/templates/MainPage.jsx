@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import '../styles/mainPage.scss'
+import Header from "./Header"
 export default function MainPage() {
     const [entityName, setEntityName] = useState("")
     const [entities, setEntities] = useState([
@@ -7,19 +8,9 @@ export default function MainPage() {
         "Project",
         "User"
     ])
-
-
     return (
         <div className="container">
-            <header className="head-bar">
-                <div id="app-name">Task manager</div>
-                <div className="menu-container">
-                    <ul className="menu">
-                        <li className="menu-item">Entities</li>
-                        <li className="menu-item">Project</li>
-                    </ul>
-                </div>
-            </header>
+            <Header />
             <div className="content">
                 <div className="data-container">
                     <div className="entity-input">
