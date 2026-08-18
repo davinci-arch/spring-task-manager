@@ -1,13 +1,53 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/mainPage.scss'
 import Header from "./Header"
+import { getAllUsers, getAllProjects, getAllTasks } from "../api/UserAPI"
+import getTableNames from "../api/AvailableTablesAPI"
+import DataTable from "./DataTable"
 export default function MainPage() {
     const [entityName, setEntityName] = useState("")
-    const [entities, setEntities] = useState([
-        "Task",
-        "Project",
-        "User"
-    ])
+    const [entities, setEntities] = useState([])
+    const [dataTable, setDataTable] = useState([]);
+
+    useEffect(() => {
+        getTableNames()
+            .then(data => {
+                setEntities(data.data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }, []);
+    useEffect(() => {
+        let loadData;
+
+        if (entityName === "Users") {
+            loadData = getAllUsers;
+        } else if (entityName === "Projects") {
+            loadData = getAllProjects;
+        } else if (entityName === "Tasks") {
+            loadData = getAllTasks;
+        }
+
+        if (!loadData) {
+            setDataTable([]);
+            return;
+        }
+
+        loadData()
+            .then(data => {
+                setDataTable(data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+    }, [entityName]);
+
+    const choseTableToLoad = (e => {
+        setEntityName(e.target.value);
+        
+    })
     return (
         <div className="container">
             <Header />
@@ -20,26 +60,19 @@ export default function MainPage() {
                         list="entities"
                         placeholder="Choose which entity need to load"
                         value={entityName}
-                        onChange={e => setEntityName(e.target.value)}
+                        onChange={e => choseTableToLoad(e)}
                           />
                         <datalist id="entities">
-                            {entities.map(value => (
-                                <option value={value} key={value} />
-                            ))}
+                            {entities.length > 0 &&
+                                entities.map(value => (
+                                    <option value={value} key={value} />
+                                ))
+                            }
                         </datalist>
                     </div>
                     <div className="entity-table-container">
                         <h1>{entityName === "" ? "Entity name" : entityName}</h1>
-                        <table>
-                            <tr>
-                                <th>Months</th>
-                                <th>Savings</th>
-                            </tr>
-                            <tr>
-                                <td>January</td>
-                                <td>$1000</td>
-                            </tr>
-                        </table>
+                        {entityName !== "" && <DataTable data={dataTable}/>}
                     </div>
                 </div>
             </div>

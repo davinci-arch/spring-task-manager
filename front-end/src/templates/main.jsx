@@ -6,6 +6,6 @@ import Tasks from './Tasks'
 import ProjectPage from './ProjectPage'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Tasks/>
+    <MainPage/>
   </StrictMode>,
 )
